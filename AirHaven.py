@@ -5,17 +5,29 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import tabledef
 import requests
+import yaml
 
-# Build the basic URL used in the API
-BACKEND_API_HOST = 'http://127.0.0.1:4000'
-BACKEND_API_VERSION = '1.0'
-BACKEND_API_BASE_URL = '{0}/AirHaven/api/{1}'.format(BACKEND_API_HOST, BACKEND_API_VERSION)
+
+# Build the configuration for the software
+with open("config/app-config.yaml", 'r') as ymlfile:
+    cfg = yaml.load(ymlfile)
+    BACKEND_API_HOST = cfg['backend']['api']['host']
+    BACKEND_API_VERSION = cfg['backend']['api']['version']
+    BACKEND_API_BASE_URL = '{0}/AirHaven/api/{1}'.format(BACKEND_API_HOST, BACKEND_API_VERSION)
+
+    if cfg['app']['host'] == 'localhost':
+        APP_HOST = '127.0.0.1'
+    else:
+        APP_HOST = cfg['app']['host']
+
+    APP_PORT = cfg['app']['port']
 
 # build the database and flask application
 engine = create_engine('sqlite:///usertable.db', echo=True)
 app = Flask(__name__)
 
 
+# Get the children of a given folder id
 def retrieve_children(parent_id):
     # Build the request URL
     url = '{0}/files/{1}/children'.format(BACKEND_API_BASE_URL, parent_id)
@@ -67,20 +79,7 @@ def logout():
     session['logged_in'] = False
     return home()
 
-
-@app.route('/test')
-def test():
-    url = 'http://127.0.0.1:4000/AirHaven/api/1.0/files/1/children'
-    r = requests.post(url)
-    print("\nRESULT:")
-    print(r.headers)
-    print(r.text)
-    print(r.json())
-    print("\n")
-    return home()
-
-
 # Run the flask application
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
-    app.run(debug=True, host='127.0.0.1', port=5000)  # defaults: host='127.0.0.1', port=5000
+    app.run(debug=True, host=APP_HOST, port=APP_PORT)  # defaults: host='127.0.0.1', port=5000

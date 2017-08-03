@@ -1,0 +1,7 @@
+backend:
+  api:
+    host: http://127.0.0.1:4000
+    version: 1.0
+app:
+  host: localhost
+  port: 5000
