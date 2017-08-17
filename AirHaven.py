@@ -1,9 +1,5 @@
 import os
 from flask import Flask, flash, render_template, request, session
-from passlib.hash import pbkdf2_sha256
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-import tabledef
 import requests
 import yaml
 
@@ -23,7 +19,6 @@ with open("config/app-config.yaml", 'r') as ymlfile:
     APP_PORT = cfg['app']['port']
 
 # build the database and flask application
-engine = create_engine('sqlite:///usertable.db', echo=True)
 app = Flask(__name__)
 
 
@@ -43,8 +38,9 @@ def home():
     else:
         root_file_id = 1
         children_json = retrieve_children(root_file_id)
-        print(children_json)
-        return render_template('index.html', children=children_json['children'])
+        return render_template('index.html',
+                               children=children_json['children'],
+                               user_session_data=session.get('user_data'))
 
 
 @app.route('/login', methods=['POST'])
@@ -53,20 +49,18 @@ def do_admin_login():
     form_username = str(request.form['username'])
     form_password = str(request.form['password'])
 
-    # Set up a database session and query for the username and password
-    user_session = sessionmaker(bind=engine)
-    s = user_session()
-    query = s.query(tabledef.User).filter(tabledef.User.username.in_([form_username]))
-    result = query.first()
+    # query the server for a session API authentication token to use, using the given username/password
+    response = requests.get('{0}/users/authenticate-user'.format(BACKEND_API_BASE_URL), auth=(form_username,
+                                                                                              form_password))
 
-    # Check the password hashes if a username was found in the database
-    if result:
-        user_validated = pbkdf2_sha256.verify(form_password, result.password_hash)
-    else:
-        user_validated = False
+    user_validated = response.json()['token']
+
+    print('{0}: {1}'.format(type(user_validated),user_validated))
 
     # If true, log in. Otherwise, declare a wrong password
     if user_validated:
+        # Create a data container to contain the session data for the logged in user
+        session['user_data'] = {'username': form_username}
         session['logged_in'] = True
     else:
         flash('Invalid username or password')
