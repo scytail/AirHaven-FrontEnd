@@ -20,7 +20,6 @@ This application is designed to be a frontend web app that can "dock" to the fil
 
 ## Usage ##
 1. Confirm that the software has been set up and that the configuration settings are correct.
-2. Execute `tabledef.py` (usually by running the command `python tabledef.py`).
-    1. After executing, there should be an SQLite file in the same directory as `tabledef.py` called `usertable.db`.
+2. Confirm that the back end has been launched and is ready to dock to the front-end (instructions can be found [here](https://github.com/bspymaster/AirHaven-BackEnd)).
 3. Execute `AirHaven.py` and confirm that the ip and port were properly bound and that the web server is running.
-4. Access the web app by going to the web address (specified in configuration) in your browser.
+4. Access the web app by going to the web address (specified in the configuration) in your browser.
