@@ -25,9 +25,9 @@ a{
 }
 
 .wrapper{
-	width:450px;
-	margin:30px auto 0;
-	background-color:#FFFFFF;
+	width: 85vw;
+	margin: 30px auto 0;
+	background-color: #FFFFFF;
 	-webkit-box-sizing: border-box;
   	-moz-box-sizing: border-box;
 	box-sizing: border-box;
@@ -53,6 +53,11 @@ header a{
 
 header a:hover, .list-mode header a.hide-list:hover{
 	background-color:#3498DB;
+}
+
+header a.user-session{
+    width:auto;
+    text-decoration: none;
 }
 
 header a.hide-list{
