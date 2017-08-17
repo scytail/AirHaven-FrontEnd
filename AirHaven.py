@@ -44,7 +44,9 @@ def home():
         root_file_id = 1
         children_json = retrieve_children(root_file_id)
         print(children_json)
-        return render_template('index.html', children=children_json['children'])
+        return render_template('index.html',
+                               children=children_json['children'],
+                               user_session_data=session.get('user_data'))
 
 
 @app.route('/login', methods=['POST'])
@@ -54,8 +56,8 @@ def do_admin_login():
     form_password = str(request.form['password'])
 
     # Set up a database session and query for the username and password
-    user_session = sessionmaker(bind=engine)
-    s = user_session()
+    user_db_session = sessionmaker(bind=engine)
+    s = user_db_session()
     query = s.query(tabledef.User).filter(tabledef.User.username.in_([form_username]))
     result = query.first()
 
@@ -67,6 +69,8 @@ def do_admin_login():
 
     # If true, log in. Otherwise, declare a wrong password
     if user_validated:
+        # Create a data container to contain the session data for the logged in user
+        session['user_data'] = {'username': form_username}
         session['logged_in'] = True
     else:
         flash('Invalid username or password')
