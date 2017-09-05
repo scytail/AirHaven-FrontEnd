@@ -1,0 +1,52 @@
+{%  extends "baseLayout.html" %}
+{% block content %}
+    {% if session['logged_in'] %}
+        <p>You're logged in already!</p>
+    {% else %}
+        <form action="/register" method="POST">
+            <div class="login register">
+                <div class="login-screen">
+                    <div class="app-title">
+                        <h1>Create An Account</h1>
+                    </div>
+
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <div class="flashes">
+                                {% for message in messages %}
+                                    <p>{{ message }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+
+                    <div class="login-form">
+                        <div class="control-group">
+                            <input type="text" class="login-field" value="" placeholder="username" name="username">
+                        </div>
+
+                        <div class="control-group">
+                            <input type="text" class="login-field" value="" placeholder="email" name="email">
+                        </div>
+
+                        <div class="control-group">
+                            <input type="text" class="login-field" value="" placeholder="verify email" name="verify-email">
+                        </div>
+
+                        <div class="control-group">
+                            <input type="password" class="login-field" value="" placeholder="password" name="password">
+                        </div>
+
+                        <div class="control-group">
+                            <input type="password" class="login-field" value="" placeholder="verify password" name="verify-password">
+                        </div>
+
+                        <input type="submit" value="Register" class="btn btn-primary btn-large btn-block" >
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </form>
+    {% endif %}
+
+{% endblock %}
