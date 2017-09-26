@@ -37,8 +37,10 @@ def home():
     if not session.get('logged_in'):
         return render_template('login.html')
     else:
-        root_file_id = 1
+        root_file_id = session.get('user_data').get('root_directory_id')
         children_json = retrieve_children(root_file_id)
+        print(root_file_id)
+        print(children_json)
         return render_template('index.html',
                                children=children_json['children'],
                                user_session_data=session.get('user_data'))
@@ -59,7 +61,7 @@ def login():
     # If true, log in. Otherwise, declare a wrong password
     if user_validated:
         # Create a data container to contain the session data for the logged in user
-        session['user_data'] = {'username': form_username}
+        session['user_data'] = {'username': form_username, 'root_directory_id': response.json()['root_directory']}
         session['logged_in'] = True
     else:
         flash('Invalid username or password')
